@@ -27,8 +27,15 @@ module UniKey
       #
       # Sets @verified_request with the verified request info on success.
       # Renders 401 Unauthorized on failure.
+      # Adds X-UniKey-* response headers to confirm verification.
       def verify_unikey_signature
         @verified_request = UniKey.verify!(request)
+
+        # Add response headers confirming verification
+        response.set_header("X-UniKey-Verified", "true")
+        response.set_header("X-UniKey-Method", "dns")
+        response.set_header("X-UniKey-Signer", @verified_request.signer)
+        response.set_header("X-UniKey-Agent", @verified_request.agent_email)
       rescue UniKey::InvalidSignature
         render_unikey_error("Invalid signature", :unauthorized)
       rescue UniKey::ExpiredRequest
