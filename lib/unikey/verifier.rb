@@ -108,11 +108,21 @@ module UniKey
         normalized = {}
         headers.each do |key, value|
           # Handle both "X-UniKey-Signature" and "HTTP_X_UNIKEY_SIGNATURE" formats
-          normalized_key = key.to_s
-            .gsub(/^HTTP_/, "")
-            .split("_")
-            .map(&:capitalize)
-            .join("-")
+          key_str = key.to_s
+
+          if key_str.start_with?("HTTP_")
+            # Convert HTTP_X_UNIKEY_SIGNATURE to X-UniKey-Signature
+            normalized_key = key_str
+              .gsub(/^HTTP_/, "")
+              .split("_")
+              .map(&:capitalize)
+              .join("-")
+              .gsub("Unikey", "UniKey")  # Fix casing for UniKey
+          else
+            # Already in header format, keep as-is
+            normalized_key = key_str
+          end
+
           normalized[normalized_key] = value.to_s
         end
         normalized
