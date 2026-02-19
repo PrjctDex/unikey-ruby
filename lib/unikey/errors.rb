@@ -59,4 +59,31 @@ module UniKey
       "Signer '#{@signer}' is not trusted"
     end
   end
+
+  # Raised when a Trust Packet has invalid structure
+  class InvalidPacket < Error
+    attr_reader :reason
+
+    def initialize(reason = "Invalid trust packet")
+      @reason = reason
+      super(reason)
+    end
+  end
+
+  # Raised when DNS resolvers disagree (RFC-002 hardening)
+  class DNSInconsistency < Error
+    attr_reader :domain, :expected, :got, :total
+
+    def initialize(domain, expected:, got:, total:)
+      @domain = domain
+      @expected = expected
+      @got = got
+      @total = total
+      super()
+    end
+
+    def message
+      "DNS inconsistency for #{@domain}: only #{@got}/#{@total} resolvers agree (need #{@expected})"
+    end
+  end
 end

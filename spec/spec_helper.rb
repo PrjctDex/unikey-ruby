@@ -23,6 +23,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     UniKey::DNS.clear_cache
+    UniKey::HardenedDNS.clear_cache
     UniKey.configuration = UniKey::Configuration.new
   end
 end

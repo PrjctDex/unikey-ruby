@@ -69,7 +69,7 @@ module UniKey
         signature_bytes = Base64.decode64(signature)
         begin
           verify_key.verify(signature_bytes, canonical)
-        rescue Ed25519::VerifyError
+        rescue Ed25519::VerifyError, ArgumentError
           raise InvalidSignature
         end
 
